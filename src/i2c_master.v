@@ -38,7 +38,7 @@ always @(posedge clk or negedge rst_n) begin
     if (!rst_n) sda_sr <= 3'b111;
     else        sda_sr <= {sda_sr[1:0], sda_in};
 end
-wire sda_in = sda_sr[2];
+wire sda_in_sync = sda_sr[2];
 localparam S_IDLE=0,S_START1=1,S_START2=2,S_START3=3,S_SEND=4;
 localparam S_ACK_L=5,S_ACK_H=6,S_ACK_F=7,S_RECV=8;
 localparam S_NACK_L=9,S_NACK_H=10,S_STOP1=11,S_STOP2=12,S_STOP3=13;
@@ -82,7 +82,7 @@ always @(posedge clk or negedge rst_n) begin
             end
             S_ACK_L: if(half_tick) begin sda_oen<=0; scl<=1; state<=S_ACK_H; end
             S_ACK_H: if(half_tick) begin
-                if(sda_in) begin ack_err<=1; scl<=0; state<=S_STOP1;
+                if(sda_in_sync) begin ack_err<=1; scl<=0; state<=S_STOP1;
                 end else begin scl<=0; state<=S_ACK_F; end
             end
             S_ACK_F: if(half_tick) begin
@@ -98,9 +98,9 @@ always @(posedge clk or negedge rst_n) begin
                 if(half_tick) begin
                     if(scl==0) begin scl<=1;
                     end else begin
-                        shift_reg<={shift_reg[6:0],sda_in}; scl<=0;
+                        shift_reg<={shift_reg[6:0],sda_in_sync}; scl<=0;
                         if(bit_cnt==0) begin
-                            rx_data<={shift_reg[6:0],sda_in};
+                            rx_data<={shift_reg[6:0],sda_in_sync};
                             rx_valid<=1; state<=S_NACK_L;
                         end else bit_cnt<=bit_cnt-1;
                     end
