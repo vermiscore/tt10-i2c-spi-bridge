@@ -8,7 +8,9 @@ module i2c_slave #(
     input  wire       clk,
     input  wire       rst_n,
     input  wire       scl,
-    inout  wire       sda,
+    input  wire       sda_in,
+    output wire       sda_out,
+    output wire       sda_oe,
     output reg  [7:0] rx_data,
     output reg        rx_valid,
     input  wire [7:0] tx_data,
@@ -24,7 +26,7 @@ always @(posedge clk or negedge rst_n) begin
         scl_sr <= 3'b111; sda_sr <= 3'b111;
     end else begin
         scl_sr <= {scl_sr[1:0], scl};
-        sda_sr <= {sda_sr[1:0], sda};
+        sda_sr <= {sda_sr[1:0], sda_in};
     end
 end
 
@@ -53,7 +55,8 @@ reg       sda_oen;
 reg       addr_match;
 reg       ack_phase; // ACK状態の内部フェーズ管理
 
-assign sda = sda_oen ? 1'b0 : 1'bz;
+assign sda_out = 1'b0;
+ assign sda_oe  = sda_oen;
 
 always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin

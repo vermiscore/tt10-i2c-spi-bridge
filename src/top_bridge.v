@@ -19,12 +19,16 @@ module top_bridge #(
     input  wire rst_n,
 
     // I2Cバス（スレーブとして）
-    inout  wire i2c_sda_s,
+    input  wire i2c_sda_s_in,
+    output wire i2c_sda_s_out,
+    output wire i2c_sda_s_oe,
     input  wire i2c_scl_s,
 
     // I2Cバス（マスターとして）
     output wire i2c_scl_m,
-    inout  wire i2c_sda_m,
+    input  wire i2c_sda_m_in,
+    output wire i2c_sda_m_out,
+    output wire i2c_sda_m_oe,
 
     // SPIバス（マスターとして）
     output wire spi_sck_m,
@@ -53,7 +57,9 @@ i2c_slave #(.ADDR(I2C_ADDR)) u_i2c_slave (
     .clk      (clk),
     .rst_n    (rst_n),
     .scl      (i2c_scl_s),
-    .sda      (i2c_sda_s),
+    .sda_in  (i2c_sda_s_in),
+        .sda_out (i2c_sda_s_out),
+        .sda_oe  (i2c_sda_s_oe),
     .rx_data  (i2cs_rx_data),
     .rx_valid (i2cs_rx_valid),
     .tx_data  (i2cs_tx_data),
@@ -138,7 +144,9 @@ i2c_master #(.CLK_DIV(I2C_CLK_DIV)) u_i2c_master (
     .busy     (i2cm_busy),
     .ack_err  (i2cm_ack_err),
     .scl      (i2c_scl_m),
-    .sda      (i2c_sda_m)
+    .sda_in  (i2c_sda_m_in),
+        .sda_out (i2c_sda_m_out),
+        .sda_oe  (i2c_sda_m_oe)
 );
 
 // -------------------------------------------------------

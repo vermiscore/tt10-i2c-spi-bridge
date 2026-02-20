@@ -14,7 +14,9 @@ module i2c_master #(
     output reg        busy,
     output reg        ack_err,
     output reg        scl,
-    inout  wire       sda
+    input  wire       sda_in,
+    output wire       sda_out,
+    output wire       sda_oe
 );
 reg [7:0] clk_cnt;
 reg       half_tick;
@@ -29,11 +31,12 @@ always @(posedge clk or negedge rst_n) begin
     end
 end
 reg sda_oen;
-assign sda = sda_oen ? 1'b0 : 1'bz;
+assign sda_out = 1'b0;
+assign sda_oe  = sda_oen;
 reg [2:0] sda_sr;
 always @(posedge clk or negedge rst_n) begin
     if (!rst_n) sda_sr <= 3'b111;
-    else        sda_sr <= {sda_sr[1:0], sda};
+    else        sda_sr <= {sda_sr[1:0], sda_in};
 end
 wire sda_in = sda_sr[2];
 localparam S_IDLE=0,S_START1=1,S_START2=2,S_START3=3,S_SEND=4;
