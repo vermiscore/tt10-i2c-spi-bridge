@@ -1,20 +1,18 @@
-<!---
-
-This file is used to generate your project datasheet. Please fill in the information below and delete any unused
-sections.
-
-You can also include images in this folder and reference them in the markdown. Each image must be less than
-512 kb in size, and the combined size of all images must be less than 1 MB.
--->
-
 ## How it works
 
-Explain how your project works
+This chip implements a bidirectional I2C↔SPI bridge. It can operate in two modes:
+
+1. **I2C to SPI**: An external I2C master sends data to this chip (I2C address 0x42), which forwards it to an SPI slave device.
+2. **SPI to I2C**: An external SPI master sends data to this chip, which forwards it to an I2C slave device.
+
+The bridge contains an I2C slave controller, an I2C master controller, an SPI master controller, and an SPI slave controller, connected via internal FIFOs.
 
 ## How to test
 
-Explain how to use your project
+Connect an I2C master to the SDA/SCL inputs and write to address 0x42. Send command byte 0x01 followed by data to trigger an I2C→SPI transfer. Verify the data appears on the SPI master output pins.
 
 ## External hardware
 
-List external hardware used in your project (e.g. PMOD, LED display, etc), if any
+- I2C master device (for I2C slave interface testing)
+- SPI slave device (e.g. sensor or memory)
+- Logic analyzer recommended for verification
